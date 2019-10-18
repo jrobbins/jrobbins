@@ -2,9 +2,10 @@
 
 * Bullet items
 * Bullet items
-* Bullet items
 
+1. Numbered items
+1. More numbered items
 
-Paragraphs.
+Paragraphs with sentences.
 
 Conclusion.
