@@ -5,6 +5,7 @@
 
 1. Numbered items
 1. More numbered items
+1. Three
 
 Paragraphs with sentences.
 
