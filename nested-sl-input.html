@@ -10,7 +10,7 @@
   <li><patched-nested-sl-input name="4" value="d"></patched-nested-sl-input>
   </ol>
 <button type="submit">Submit</button>
-<p>When you hit submit, the URL should add query parameters 1=a, 2=b, 3=c, 4=d. ddd</p>
+<p>When you hit submit, the URL should add query parameters 1=a, 2=b, 3=c, 4=d.</p>
 </form>
 
 <script type="module">
@@ -36,7 +36,6 @@ customElements.define('nested-sl-input', NestedSLInput);
 class PatchedNestedSLInput extends NestedSLInput {
   
   firstUpdated() {
-    console.log("should patch");
     const inputEl = this.shadowRoot.querySelector('sl-input');
     this.patchedController = new PatchedFormSubmitController(inputEl);
   }
@@ -51,7 +50,7 @@ customElements.define('patched-nested-sl-input', PatchedNestedSLInput);
 function closestAcrossShadowRoot(el, tag) {
   tag = tag.toUpperCase();
   while (el && el.tagName != tag) {
-    el = el.parentElement ? el.parentElement : el.parentNode.host;
+    el = el.closest(tag) || el.getHostNode();
   }
   return (el && el.tagName == tag) ? el : null;
 }
@@ -85,7 +84,6 @@ class PatchedFormSubmitController {
         }
     }
     handleFormData(event) {
-      console.log('options', this.options);
         const disabled = this.options.disabled(this.host);
         const name = this.options.name(this.host);
         const value = this.options.value(this.host);
@@ -139,7 +137,4 @@ class PatchedFormSubmitController {
     }
  }
 
-
-
-console.log('hey now with ref99');
 </script>
