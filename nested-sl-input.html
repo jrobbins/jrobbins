@@ -4,21 +4,20 @@
 
 <form method="get">
   <ol>
-  <li><input name="a" value="aaa"></input>
-  <li><sl-input name="b" value="bbb"></sl-input>
-  <li><nested-sl-input name="c" value="ccc"></nested-sl-input>  
-  <li><patched-nested-sl-input name=d value=ddd></patched-nested-sl-input>
+  <li><input name="1" value="aaa"></input>
+  <li><sl-input name="2" value="bbb"></sl-input>
+  <li><nested-sl-input name="3" value="ccc"></nested-sl-input>  
+  <li><patched-nested-sl-input name="4" value=ddd></patched-nested-sl-input>
   </ol>
 <button type="submit">Submit</button>
 </form>
 
 <script type="module">
-  import {LitElement, css, html, ref, createRef} from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
+  import {LitElement, css, html} from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
 
 class NestedSLInput extends LitElement {
   constructor() {
     super();
-    this.buttonRef = createRef();
   }
 
   static get properties() {
@@ -30,20 +29,9 @@ class NestedSLInput extends LitElement {
   
   render() {
     return html`
-      <sl-input name=${this.name} value=${this.value} ${ref(this.inputRef)}>
-        <slot></slot>
-      </sl-input> 
+      <sl-input name=${this.name} value=${this.value}}></sl-input> 
       `;
-  }
-  
-  firstUpdated() {
-    if (this.patch) {
-      console.log("should patch");
-      this.patchedController = new PatchedFormSubmitController(this);
-    }
-    const buttonEl = this.shadowRoot.querySelector('sl-button');
-  }
-  
+  }  
 }
 customElements.define('nested-sl-input', NestedSLInput);
 
@@ -52,8 +40,8 @@ class PatchedNestedSLInput extends NestedSLInput {
   
   firstUpdated() {
     console.log("should patch");
-    this.patchedController = new PatchedFormSubmitController(this);
-    const buttonEl = this.shadowRoot.querySelector('sl-button');
+    const inputEl = this.shadowRoot.querySelector('sl-input');
+    this.patchedController = new PatchedFormSubmitController(inputEl);
   }
   
 }
