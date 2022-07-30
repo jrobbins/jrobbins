@@ -10,17 +10,13 @@
   <li><patched-nested-sl-input name="4" value="d"></patched-nested-sl-input>
   </ol>
 <button type="submit">Submit</button>
-<p>When you hit submit, the URL should add query parameters 1=a, 2=b, 3=c, 4=d. bbb</p>
+<p>When you hit submit, the URL should add query parameters 1=a, 2=b, 3=c, 4=d. ccc</p>
 </form>
 
 <script type="module">
   import {LitElement, css, html} from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
 
 class NestedSLInput extends LitElement {
-  constructor() {
-    super();
-  }
-
   static get properties() {
     return {
       name: {type: String},
@@ -64,6 +60,7 @@ const reportValidityOverloads = new WeakMap();
 
 class PatchedFormSubmitController {
     constructor(host, options) {
+       super();
         this.options = Object.assign({ form: (input) => closestAcrossShadowRoot(input, 'form'), name: (input) => input.name, value: (input) => input.value, defaultValue: (input) => input.defaultValue, disabled: (input) => input.disabled, reportValidity: (input) => {
                 return typeof input.reportValidity === 'function' ? input.reportValidity() : true;
             }, setValue: (input, value) => {
