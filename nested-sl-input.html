@@ -50,7 +50,7 @@ customElements.define('patched-nested-sl-input', PatchedNestedSLInput);
 function closestAcrossShadowRoot(el, tag) {
   tag = tag.toUpperCase();
   while (el && el.tagName != tag) {
-    el = el.closest(tag) || el.getHostNode();
+    el = el.closest(tag) || el.getRootNode().host;
   }
   return (el && el.tagName == tag) ? el : null;
 }
