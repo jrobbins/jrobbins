@@ -10,7 +10,7 @@
   <li><patched-nested-sl-input name="4" value=ddd></patched-nested-sl-input>
   </ol>
 <button type="submit">Submit</button>
-<p>When you hit submit, the URL should add query parameters 1=a, 2=b, 3=c, 4=d.</p>
+<p>When you hit submit, the URL should add query parameters 1=a, 2=b, 3=c, 4=d. aaa</p>
 </form>
 
 <script type="module">
@@ -64,7 +64,7 @@ const reportValidityOverloads = new WeakMap();
 
 class PatchedFormSubmitController {
     constructor(host, options) {
-        this.options = Object.assign({ form: (input) => input.closestAcopssShadowRoot('form'), name: (input) => input.name, value: (input) => input.value, defaultValue: (input) => input.defaultValue, disabled: (input) => input.disabled, reportValidity: (input) => {
+        this.options = Object.assign({ form: (input) => input.closestAcrossShadowRoot('form'), name: (input) => input.name, value: (input) => input.value, defaultValue: (input) => input.defaultValue, disabled: (input) => input.disabled, reportValidity: (input) => {
                 return typeof input.reportValidity === 'function' ? input.reportValidity() : true;
             }, setValue: (input, value) => {
                 input.value = value;
