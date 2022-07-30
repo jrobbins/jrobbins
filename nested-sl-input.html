@@ -10,7 +10,9 @@
   <li><patched-nested-sl-input name="4" value="d"></patched-nested-sl-input>
   </ol>
 <button type="submit">Submit</button>
-<p>When you hit submit, the URL should add query parameters 1=a, 2=b, 3=c, 4=d.</p>
+  <p>When you hit submit, the URL should add query parameters 1=a, 2=b, 3=c, 4=d.</p>
+  <p>It fails to add 3=c because sl-input elements nested inside other elements cannot find the closest form.</p>
+  <p>It successfully adds 4=d because in patched-nested-sl-input I replaced input.closest() with a new function closestAcrossShadowRoot().</p>
 </form>
 
 <script type="module">
