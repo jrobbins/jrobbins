@@ -1,0 +1,161 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.78/dist/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.78/dist/shoelace.js">
+</script>
+
+<form method="get">
+  <ol>
+  <li><input name="a" value="aaa"></input>
+  <li><sl-input name="b" value="bbb"></sl-input>
+  <li><nested-sl-input name="c" value="ccc"></nested-sl-input>  
+  <li><patched-nested-sl-input name=d value=ddd></patched-nested-sl-input>
+  </ol>
+<button type="submit">Submit</button>
+</form>
+
+<script type="module">
+  import {LitElement, css, html, ref, createRef} from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
+
+class NestedSLInput extends LitElement {
+  constructor() {
+    super();
+    this.buttonRef = createRef();
+  }
+
+  static get properties() {
+    return {
+      name: {type: String},
+      value: {type: String},
+    };
+  }
+  
+  render() {
+    return html`
+      <sl-input name=${this.name} value=${this.value} ${ref(this.inputRef)}>
+        <slot></slot>
+      </sl-input> 
+      `;
+  }
+  
+  firstUpdated() {
+    if (this.patch) {
+      console.log("should patch");
+      this.patchedController = new PatchedFormSubmitController(this);
+    }
+    const buttonEl = this.shadowRoot.querySelector('sl-button');
+  }
+  
+}
+customElements.define('nested-sl-input', NestedSLInput);
+
+
+class PatchedNestedSLInput extends NestedSLInput {
+  
+  firstUpdated() {
+    console.log("should patch");
+    this.patchedController = new PatchedFormSubmitController(this);
+    const buttonEl = this.shadowRoot.querySelector('sl-button');
+  }
+  
+}
+
+
+customElements.define('patched-nested-sl-input', PatchedNestedSLInput);
+
+
+
+function closestAcrossShadowRoot(el, tag) {
+  tag = tag.toUpperCase();
+  while (el && el.tagName != tag) {
+    el = el.parentElement ? el.parentElement : el.parentNode.host;
+  }
+  return (el && el.tagName == tag) ? el : null;
+}
+
+const reportValidityOverloads = new WeakMap();
+
+class PatchedFormSubmitController {
+    constructor(host, options) {
+        this.options = Object.assign({ form: (input) => input.closestAcrpssShadowRoot('form'), name: (input) => input.name, value: (input) => input.value, defaultValue: (input) => input.defaultValue, disabled: (input) => input.disabled, reportValidity: (input) => {
+                return typeof input.reportValidity === 'function' ? input.reportValidity() : true;
+            }, setValue: (input, value) => {
+                input.value = value;
+            } }, options);
+        (this.host = host).addController(this);
+
+        this.handleFormData = this.handleFormData.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    }
+    hostConnected() {
+        this.form = this.options.form(this.host);
+        if (this.form) {
+            this.form.addEventListener('formdata', this.handleFormData);
+            this.form.addEventListener('submit', this.handleFormSubmit);
+            
+        }
+    }
+    hostDisconnected() {
+        if (this.form) {
+            this.form.removeEventListener('formdata', this.handleFormData);
+            this.form.removeEventListener('submit', this.handleFormSubmit);
+            this.form = undefined;
+        }
+    }
+    handleFormData(event) {
+      console.log('options', this.options);
+        const disabled = this.options.disabled(this.host);
+        const name = this.options.name(this.host);
+        const value = this.options.value(this.host);
+        if (!disabled && typeof name === 'string' && typeof value !== 'undefined') {
+            if (Array.isArray(value)) {
+                value.forEach(val => {
+                    event.formData.append(name, val.toString());
+                });
+            }
+            else {
+                event.formData.append(name, value.toString());
+            }
+        }
+    }
+    handleFormSubmit(event) {
+        const disabled = this.options.disabled(this.host);
+        const reportValidity = this.options.reportValidity;
+        if (this.form && !this.form.noValidate && !disabled && !reportValidity(this.host)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
+    }
+  
+   doAction(type, invoker) {
+        if (this.form) {
+            const button = document.createElement('button');
+            button.type = type;
+            button.style.position = 'absolute';
+            button.style.width = '0';
+            button.style.height = '0';
+            button.style.clipPath = 'inset(50%)';
+            button.style.overflow = 'hidden';
+            button.style.whiteSpace = 'nowrap';
+            if (invoker) {
+                ['formaction', 'formmethod', 'formnovalidate', 'formtarget'].forEach(attr => {
+                    if (invoker.hasAttribute(attr)) {
+                        button.setAttribute(attr, invoker.getAttribute(attr));
+                    }
+                });
+            }
+            this.form.append(button);
+            button.click();
+            button.remove();
+        }
+    }
+    reset(invoker) {
+        this.doAction('reset', invoker);
+    }
+    submit(invoker) {
+        this.doAction('submit', invoker);
+    }
+ }
+
+
+
+console.log('hey now with ref99');
+</script>
